@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AircraftControl : MonoBehaviour
 {
-    // thrust is the force with which the propeller pushed
+    // thrust is the force with which the propeller pushes the plane forward
 
     [SerializeField] float thrust = 300f;
 
@@ -19,30 +19,33 @@ public class AircraftControl : MonoBehaviour
     [SerializeField] float rudderSpeed = 0.01f;
     [SerializeField] float elevatorSpeed = 0.01f;
 
-    //rudder and elevator force factor is how much force the flaps exert when wind hits them
+    // rudder and elevator force factor is how much force the flaps exert when wind hits them
 
     [SerializeField] float rudderForceFactor = 0.5f;
     [SerializeField] float elevatorForceFactor = 0.5f;
 
-    //propeller component
+    // propeller component
 
     [SerializeField] GameObject propeller;
 
-    //current angle of the rudder and elevator flap
+    // current angle of the rudder and elevator flap
 
     float rudderAngle = 0.0f, elevatorAngle = 0.0f;
 
-    //rigidbody of the aircraft
+    // rigidbody of the aircraft
     Rigidbody rb;
 
-    //is plane on ground or in air
+    // is plane on ground or in air
     public bool isGrounded = true;
+
+    // states to stores if the plane is moving forward, backward, left and right
+    // only used when plane is on ground
+    bool moveF, moveB, moveL, moveR;
 
     //non state variables
     Vector2 screenCenter = new Vector2(Screen.width / 2, Screen.height / 2);
     Vector3 m_EulerAngleVelocity;
 
-    bool moveF, moveB, moveL, moveR;
     
     void Start()
     {
@@ -57,13 +60,12 @@ public class AircraftControl : MonoBehaviour
     private void FixedUpdate()
     {
         HandleMovement();
+        
         if (!isGrounded)
             HandleRotationInAir();
 
-        if (isEngineOn)
-        {
+        if (isEngineOn) 
             RotatePropeller();
-        }
     }
     void HandleInput()
     {
