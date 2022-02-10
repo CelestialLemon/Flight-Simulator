@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class AircraftControl : MonoBehaviour
 {
@@ -24,9 +22,9 @@ public class AircraftControl : MonoBehaviour
     [SerializeField] float rudderForceFactor = 0.5f;
     [SerializeField] float elevatorForceFactor = 0.5f;
 
-    // propeller component
-
+    // propeller component and speed of rotation
     [SerializeField] GameObject propeller;
+    [SerializeField] float propellerSpeed = 75.0f;
 
     // current angle of the rudder and elevator flap
 
@@ -82,6 +80,9 @@ public class AircraftControl : MonoBehaviour
         else if (Input.GetKey(KeyCode.D)) rudderAngle += rudderSpeed * Time.deltaTime;
         else
         {
+            // if rudder angle is too close to zero make is zero
+            // this avoids rudder oscillating between +ve and -ve values
+
             if (Mathf.Abs(rudderAngle) < 0.01f) rudderAngle = 0;
             else if (rudderAngle > 0) rudderAngle -= rudderSpeed * Time.deltaTime;
             else if (rudderAngle < 0) rudderAngle += rudderSpeed * Time.deltaTime;
@@ -99,6 +100,9 @@ public class AircraftControl : MonoBehaviour
         else if (Input.GetKey(KeyCode.Space)) elevatorAngle = 0;
         else
         {
+            // if elevator angle is too close to zero make is zero
+            // this avoids elevator oscillating between +ve and -ve values
+
             if (Mathf.Abs(elevatorAngle) < 0.01f) elevatorAngle = 0;
             else if (elevatorAngle > 0) elevatorAngle -= elevatorSpeed * Time.deltaTime;
             else if (elevatorAngle < 0) elevatorAngle += elevatorSpeed * Time.deltaTime;
@@ -175,7 +179,7 @@ public class AircraftControl : MonoBehaviour
      */
     void RotatePropeller()
     {
-        propeller.transform.Rotate(new Vector3(0, 75.0f, 0));
+        propeller.transform.Rotate(new Vector3(0, propellerSpeed, 0));
     }
 
     /*
@@ -183,11 +187,13 @@ public class AircraftControl : MonoBehaviour
      */
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Ground")) { isGrounded = true; Debug.Log("isgrounded"); }
+        if (collision.gameObject.CompareTag("Ground")) 
+            isGrounded = true;
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Ground")) { isGrounded = false; Debug.Log("Not grounded"); }
+        if (collision.gameObject.CompareTag("Ground")) 
+            isGrounded = false;
     }
 }
